@@ -41,16 +41,14 @@ jobs:
       - name: Deploy Executable to Server
         shell: powershell
         env:
-          DEPLOY_API_URL: ${{ secrets.DEPLOY_API_URL }}   # e.g. http://yourserver.com/api/upload
+          DEPLOY_API_URL: ${{ secrets.DEPLOY_API_URL }}
           DEPLOY_API_KEY: ${{ secrets.DEPLOY_API_KEY }}
         run: |
           $version = Get-Content -Path "client\version.txt" -Raw
           Write-Host "Deploying version $version"
-          $headers = @{
-            "Authorization" = "Bearer $env:DEPLOY_API_KEY"
-          }
-          Invoke-WebRequest -Uri $env:DEPLOY_API_URL -Method Post -Headers $headers -Form @{
-              file = Get-Item "client/dist/SimpleAppAutoUpdate.exe";
-              version = $version
-          }
+          # Use curl.exe explicitly to send the POST request with multipart form data
+          curl.exe -X POST -H "Authorization: Bearer $env:DEPLOY_API_KEY" `
+            -F "file=@client/dist/SimpleAppAutoUpdate.exe" `
+            -F "version=$version" $env:DEPLOY_API_URL
+      
       
