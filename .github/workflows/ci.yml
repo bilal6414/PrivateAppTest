@@ -1,0 +1,50 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  build-and-deploy:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python for Client
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install Client Dependencies
+        working-directory: ./client
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pyinstaller
+
+      - name: Run Client Tests
+        working-directory: ./client
+        run: python -m unittest discover -s tests
+
+      - name: Build Client Executable with PyInstaller
+        working-directory: ./client
+        run: |
+          pyinstaller --onefile --windowed app.py
+          REM Rename the generated exe for consistency
+          move /Y dist\app.exe dist\SimpleAppAutoUpdate.exe
+
+      - name: Deploy Executable to Server
+        shell: powershell
+        env:
+          DEPLOY_API_URL: ${{ secrets.DEPLOY_API_URL }}   # e.g. http://yourserver.com/api/upload
+          DEPLOY_API_KEY: ${{ secrets.DEPLOY_API_KEY }}
+        run: |
+          $version = Get-Content -Path "client\version.txt" -Raw
+          Write-Host "Deploying version $version"
+          curl -X POST -H "Authorization: Bearer $env:DEPLOY_API_KEY" `
+               -F "file=@client/dist/SimpleAppAutoUpdate.exe" `
+               -F "version=$version" $env:DEPLOY_API_URL
