@@ -35,7 +35,8 @@ jobs:
         run: |
           pyinstaller --onefile --windowed app.py
           # Rename the generated exe for consistency
-          move /Y dist\app.exe dist\SimpleAppAutoUpdate.exe
+          Move-Item -Path "dist\app.exe" -Destination "dist\SimpleAppAutoUpdate.exe" -Force
+
 
       - name: Deploy Executable to Server
         shell: powershell
