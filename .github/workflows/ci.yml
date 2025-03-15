@@ -46,6 +46,11 @@ jobs:
         run: |
           $version = Get-Content -Path "client\version.txt" -Raw
           Write-Host "Deploying version $version"
-          curl -X POST -H "Authorization: Bearer $env:DEPLOY_API_KEY" `
-               -F "file=@client/dist/SimpleAppAutoUpdate.exe" `
-               -F "version=$version" $env:DEPLOY_API_URL
+          $headers = @{
+            "Authorization" = "Bearer $env:DEPLOY_API_KEY"
+          }
+          Invoke-WebRequest -Uri $env:DEPLOY_API_URL -Method Post -Headers $headers -Form @{
+              file = Get-Item "client/dist/SimpleAppAutoUpdate.exe";
+              version = $version
+          }
+      
