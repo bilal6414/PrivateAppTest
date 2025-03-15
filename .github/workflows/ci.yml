@@ -34,7 +34,7 @@ jobs:
         working-directory: ./client
         run: |
           pyinstaller --onefile --windowed app.py
-          REM Rename the generated exe for consistency
+          # Rename the generated exe for consistency
           move /Y dist\app.exe dist\SimpleAppAutoUpdate.exe
 
       - name: Deploy Executable to Server
