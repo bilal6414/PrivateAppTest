@@ -7,7 +7,7 @@ import requests
 import threading
 
 # URL to your update API endpoint (adjust to your server URL)
-UPDATE_API_URL = "http://yourserver.com/api/latest_version"
+UPDATE_API_URL = "http://192.168.150.193:5000/api/latest_version"
 
 def get_local_version():
     try:

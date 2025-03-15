@@ -7,7 +7,7 @@ app = Flask(__name__)
 UPLOAD_FOLDER = os.path.join(os.getcwd(), "static")
 VERSION_FILE = os.path.join(os.getcwd(), "version.txt")
 # Use an environment variable for the API key; default value provided for testing.
-API_KEY = os.environ.get("DEPLOY_API_KEY", "MY_SECRET_API_KEY")
+API_KEY = os.environ.get("DEPLOY_API_KEY", "Bilal1416179")
 
 # Ensure the static folder exists.
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
